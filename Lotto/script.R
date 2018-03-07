@@ -11,8 +11,8 @@ class(csv_file_list)
 
 #Function that reads in all csv files into one data frame and returns the result.
 combine.results <- function(file_list) {
-    #Initialise lotto_data variable
-    #Note thtat it hasn't been assigned to a specific type yet
+    #Initialise all_lotto_data variable
+    #Note that it hasn't been assigned to a specific type yet
     all_lotto_data <- NULL
     for (csv_file in file_list) {
         #Read each of the csv files in turn and skip the first line as it
@@ -43,7 +43,6 @@ my_na #Every TRUE value shows corresponding element is NA
 
 #Show structure of my_na
 dim(my_na)
-
 
 final_my_lotto_data <- na.omit(my_lotto_data)
 dim(final_my_lotto_data)
