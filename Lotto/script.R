@@ -1,35 +1,71 @@
 # Lotto example using datasets on Blackboard
 # Data up to end of 2017
+# All data files are downloaded from blackboard to c:/lotto
+csv_file_list <- list.files(path = "c:/lotto", pattern = "*.csv")
 
-#All data files are downloaded from blackboard to c:/lotto
+my_data <- combine_results(csv_file_list)
+my_data
+str(my_data)
 
-#Examine all files in the c:/lotto folder and 
-#store list of all csv lotto files in charcater vector
+
+combine_results <- function(file_list)
+{
+    lotto_data <- NULL
+    for (csv_file in file_list)
+    {
+        lotto_record <- read.csv(header = TRUE, paste("c:/lotto/", csv_file, sep = ""), stringsAsFactors = FALSE)
+        data_of_interest <- lotto_record[2:9]
+        lotto_data <- rbind(lotto_data, data_of_interest)
+    }
+    return(lotto_data)
+}
+
+
+
+
+
+
+temp <- read.csv("c:/lotto/1999.csv")
+str(temp)
+head(temp)
+csv_file_list <- list.files(path = "c:/lotto", pattern = "*.csv")
+csv_file_list
+
+# Examine nature of data in each csv file
+frame1 <- read.csv("c:/lotto/1999.csv")
+str(frame1)
+head(frame1, 10)
+
+# Examine all files in the c:/lotto folder and 
+# store list of all csv lotto files in charcater vector
 csv_file_list <- list.files(path = "c:/lotto", pattern = "*.csv")
 csv_file_list
 class(csv_file_list)
 
-#Function that reads in all csv files into one data frame and returns the result.
-combine.results <- function(file_list) {
+plot(total$Date, total$a)
+
+# Function that reads in all csv files into one data frame and returns the result.
+combine_results <- function(file_list) {
     #Initialise lotto_data variable
-    #Note thtat it hasn't been assigned to a specific type yet
+    #Note that it hasn't been assigned a specific variable type eg string 
     all_lotto_data <- NULL
     for (csv_file in file_list) {
-        #Read each of the csv files in turn and skip the first line as it
-        #contains a header line
-        lotto_data <- read.csv(header = TRUE, paste("c:/lotto/", csv_file, sep = ""), stringsAsFactors = FALSE)
-        #Only select attributes we're interested in
-        #We don't need the first attribute
-        data_of_interest <- lotto_data[1:8]
-        # append to the allCrimeData data frame
+        # Read each of the csv files in turn and skip the first line as it
+        # contains a header line
+        lotto_file <- read.csv(header = TRUE, paste("c:/lotto/", csv_file, sep = ""), stringsAsFactors = FALSE)
+        # Only select attributes we're interested in
+        # We don't need the first attribute
+        data_of_interest <- lotto_file[1:8]
+        # append to the all_lotto_data data frame
         all_lotto_data <- rbind(all_lotto_data, data_of_interest)
     }
+    # Return the concatenated result
     return(all_lotto_data)
 }
 
-#Call the function and return the result to a data frame
-my_lotto_data <- combine.results(csv_file_list)
-#show the contents of my_lotto_data
+# Call the function and return the result to a data frame
+my_lotto_data <- combine_results(csv_file_list)
+# show the contents of my_lotto_data
 my_lotto_data
 
 #Save the contents of my_lotto_data to a csv file called "ld.csv"
