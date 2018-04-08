@@ -16,3 +16,9 @@ filter(hflights_df, UniqueCarrier == "AA" | UniqueCarrier == "UA")
 
 arrange(hflights_df, Month, DayofMonth, desc(AirTime))
 
+mutate(hflights_df, gain = ArrDelay - DepDelay, gain_per_hour = gain / (AirTime / 60))
+
+summarise(hflights_df, delay = mean(ArrDelay, na.rm = T))
+
+per_month <- summarize(hflights_df, number_flights = sum(number_flights))
+per_month

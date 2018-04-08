@@ -62,7 +62,7 @@ str(my_lotto_data$Date)
 my_lotto_data$Date <- as.Date(my_lotto_data$Date)
 
 # Rename attribute data
-col_names <- c("PK", "Date", "Ball 1", "Ball 2", "Ball 3", "Ball 4", "Ball 5", "Ball 6", "Bonus")
+col_names <- c("PK", "Date", "Ball1", "Ball2", "Ball3", "Ball4", "Ball5", "Ball6", "Bonus")
 colnames(my_lotto_data) <- col_names
 str(my_lotto_data)
 
@@ -94,10 +94,11 @@ final_my_lotto_data
 
 install.packages("Hmisc")
 library(Hmisc)
-my_lotto_vars <- c("Ball 1", "Ball 2", "Ball 3", "Ball 4", "Ball 5", "Ball 6", "Bonus")
+my_lotto_vars <- c("Ball1", "Ball2", "Ball3", "Ball4", "Ball5", "Ball6", "Bonus")
 describe(my_lotto_data[my_lotto_vars])
 # GMD = Gini's mean difference - measure of absolute difference between pairs of observations
 ? describe
+summary(my_lotto_data)
 
 # Alternate way to get mean number for first ball
 mean_ball <- mean(my_lotto_data$`Ball 1`)
@@ -106,9 +107,21 @@ mean_ball
 max_ball1 <- max(my_lotto_data$`Ball 1`)
 max_ball1
 
-install.packages("ggplot2")
-library(ggplot2)
-data(my_lotto_data)
+# Using group manipulation
+library(magrittr)
+lotto_set <- select(my_lotto_data, my_lotto_vars)
+lotto_set <- tbl_df(lotto_set)
+attach(lotto_set)
+lotto_set
+summarise(lotto_set, MeanNo = mean(lotto_set$`Ball 1`))
+lotto_set %>% summarise(AvgNo = mean(Ball1))
+
+# plot data
+hist(my_lotto_data$Ball1, main = "Lotto results for Ball 1", )
+
+plot(my_lotto_data$Ball1 ~ my_lotto_data$Date, data = my_lotto_data)
+
+
 
 str(my_lotto_data)
 hist(my_lotto_data$`Ball 1`, main="Lotto histogram", xlab="number")
