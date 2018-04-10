@@ -5,6 +5,61 @@ theURL <- "http://www.lyit.ie/organisation/staffdirectory/staffdirectory.aspx?de
 staff_list <- readHTMLTable(theURL, which = 1, header = TRUE, stringAsFactors = FALSE)
 staff_list
 
+# Example of a simpleweb scrape
+library(rvest)
+f1 <- read_html("http://www.bbc.com/sport/formula1/43702834")
+class (f1)
+f1
+
+f1 %>% html_nodes('ul') %>% html_nodes('span')
+f1 %>% html_nodes('.cmts-list')
+
+# More detailed we bscrape
+install.packages("rvest")
+library(rvest)
+
+#Specifying the url for desired website to be scrapped
+url <- 'http://www.imdb.com/search/title?count=100&release_date=2017,2017&title_type=feature'
+
+#Reading the HTML code from the website
+webpage <- read_html(url)
+
+#Using CSS selectors to scrap the rankings section
+rank_data_html <- html_nodes(webpage, '.text-primary')
+
+#Converting the ranking data to text
+rank_data <- html_text(rank_data_html)
+
+#Let's have a look at the rankings
+head(rank_data)
+
+#Data-Preprocessing: Converting rankings to numerical
+rank_data <- as.numeric(rank_data)
+
+#Let's have another look at the rankings
+head(rank_data)
+
+#Using CSS selectors to scrap the title section
+title_data_html <- html_nodes(webpage, '.lister-item-header a')
+
+#Converting the title data to text
+title_data <- html_text(title_data_html)
+
+#Let's have a look at the title
+head(title_data)
+
+
+#Using CSS selectors to scrap the description section
+description_data_html <- html_nodes(webpage,'.ratings-bar+ .text-muted')
+
+#Converting the description data to text
+description_data <- html_text(description_data_html)
+
+#Let's have a look at the description data
+head(description_data)
+
+
+
 # Web scrape
 # General-purpose data wrangling
 install.packages("tidyverse")
