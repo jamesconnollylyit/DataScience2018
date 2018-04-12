@@ -22,10 +22,10 @@ library(rvest)
 url <- 'http://www.imdb.com/search/title?count=100&release_date=2017,2017&title_type=feature'
 
 #Reading the HTML code from the website
-webpage <- read_html(url)
+web_page <- read_html(url)
 
 #Using CSS selectors to scrap the rankings section
-rank_data_html <- html_nodes(webpage, '.text-primary')
+rank_data_html <- html_nodes(web_page, '.text-primary')
 
 #Converting the ranking data to text
 rank_data <- html_text(rank_data_html)
