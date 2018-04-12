@@ -1,20 +1,4 @@
-# Copy data from URL's
-install.packages("XML")
-library(XML)
-theURL <- "http://www.lyit.ie/organisation/staffdirectory/staffdirectory.aspx?departmentID=D202"
-staff_list <- readHTMLTable(theURL, which = 1, header = TRUE, stringAsFactors = FALSE)
-staff_list
-
-# Example of a simple web scrape
-library(rvest)
-f1 <- read_html("http://www.bbc.com/sport/formula1/43702834")
-class (f1)
-f1
-
-f1 %>% html_nodes('ul') %>% html_nodes('span')
-f1 %>% html_nodes('.cmts-list')
-
-# Example of a detailed web scrape from IMDB.com
+# Example of a detailed web scrape from IMDB.com website
 install.packages("rvest")
 library(rvest)
 
@@ -54,14 +38,32 @@ title_data <- html_text(title_data_html)
 head(title_data, 10)
 
 
-#Using CSS selectors to scrap the description section
+# Using CSS selectors to scrap the description section
 description_data_html <- html_nodes(web_page,'.ratings-bar+ .text-muted')
 
-#Converting the description data to text
+# Converting the description data to text
 description_data <- html_text(description_data_html)
 
-#Let's have a look at the description data
-head(description_data,10)
+# Let's have a look at the description data
+head(description_data, 10)
+
+# Using CSS selectors to scrap the Movie runtime section
+runtime_data_html <- html_nodes(web_page, '.text-muted .runtime')
+
+# Converting the runtime data to text
+runtime_data <- html_text(runtime_data_html)
+
+# Let's have a look at the runtime
+head(runtime_data, 10)
+
+# "min" text inside running time values are going to be a problem
+# Remove it using gsub function. And convert it using the as.numeric convertor
+runtime_data <- gsub(" min", "", runtime_data)
+runtime_data <- as.numeric(runtime_data)
+
+#Let's have another look at the runtime data
+head(rank_data, 10)
+
 
 
 
