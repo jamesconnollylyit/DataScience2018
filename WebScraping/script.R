@@ -1,62 +1,69 @@
-# Copy data from URL's
-install.packages("XML")
-library(XML)
-theURL <- "http://www.lyit.ie/organisation/staffdirectory/staffdirectory.aspx?departmentID=D202"
-staff_list <- readHTMLTable(theURL, which = 1, header = TRUE, stringAsFactors = FALSE)
-staff_list
-
-# Example of a simpleweb scrape
-library(rvest)
-f1 <- read_html("http://www.bbc.com/sport/formula1/43702834")
-class (f1)
-f1
-
-f1 %>% html_nodes('ul') %>% html_nodes('span')
-f1 %>% html_nodes('.cmts-list')
-
-# More detailed we bscrape
+# Example of a detailed web scrape from IMDB.com website
 install.packages("rvest")
 library(rvest)
 
-#Specifying the url for desired website to be scrapped
-url <- 'http://www.imdb.com/search/title?count=100&release_date=2017,2017&title_type=feature'
+# Specifying url of website to be scrapped
+url <- 'https://www.imdb.com/search/title?release_date=2017-01-01.2017-12-31'
 
-#Reading the HTML code from the website
+# Reading the HTML code from the website
 web_page <- read_html(url)
+# Quick look at the contents of web_page
+head(web_page)
+str(web_page)
 
-#Using CSS selectors to scrap the rankings section
+# Using CSS selectors to scrap the rankings section - IMDB site is 
+# examined for this information first
 rank_data_html <- html_nodes(web_page, '.text-primary')
+head(rank_data_html, 10)
 
-#Converting the ranking data to text
+# Converting the ranking data from HTML to text
 rank_data <- html_text(rank_data_html)
 
-#Let's have a look at the rankings
-head(rank_data)
+# Let's have a look at the rankings data
+head(rank_data, 10)
 
-#Data-Preprocessing: Converting rankings to numerical
+# Data-Preprocessing: Converting rankings from string to numeric
 rank_data <- as.numeric(rank_data)
 
-#Let's have another look at the rankings
-head(rank_data)
+# Let's have another look at the rankings data
+head(rank_data, 10)
 
-#Using CSS selectors to scrap the title section
-title_data_html <- html_nodes(webpage, '.lister-item-header a')
+# Using selected CSS tag to scrap the title section
+title_data_html <- html_nodes(web_page, '.lister-item-header a')
 
-#Converting the title data to text
+# Converting the title section data to text
 title_data <- html_text(title_data_html)
 
-#Let's have a look at the title
-head(title_data)
+# Let's have a look at the title
+head(title_data, 10)
 
 
-#Using CSS selectors to scrap the description section
-description_data_html <- html_nodes(webpage,'.ratings-bar+ .text-muted')
+# Using CSS selectors to scrap the description section
+description_data_html <- html_nodes(web_page,'.ratings-bar+ .text-muted')
 
-#Converting the description data to text
+# Converting the description data to text
 description_data <- html_text(description_data_html)
 
-#Let's have a look at the description data
-head(description_data)
+# Let's have a look at the description data
+head(description_data, 10)
+
+# Using CSS selectors to scrap the Movie runtime section
+runtime_data_html <- html_nodes(web_page, '.text-muted .runtime')
+
+# Converting the runtime data to text
+runtime_data <- html_text(runtime_data_html)
+
+# Let's have a look at the runtime
+head(runtime_data, 10)
+
+# "min" text inside running time values are going to be a problem
+# Remove it using gsub function. And convert it using the as.numeric convertor
+runtime_data <- gsub(" min", "", runtime_data)
+runtime_data <- as.numeric(runtime_data)
+
+#Let's have another look at the runtime data
+head(rank_data, 10)
+
 
 
 
