@@ -47,7 +47,13 @@ description_data <- html_text(description_data_html)
 # Let's have a look at the description data
 head(description_data, 10)
 
-# Using CSS selectors to scrap the Movie runtime section
+# Tidy the decription data to remove the "\n" control character
+# using gsub() function. Replaces all matches of a string
+# with a string vector of same length
+description_data <- gsub("\n", "", description_data)
+head(description_data, 10)
+
+# Using CSS selectors to scrape the Movie runtime section
 runtime_data_html <- html_nodes(web_page, '.text-muted .runtime')
 
 # Converting the runtime data to text
@@ -61,9 +67,123 @@ head(runtime_data, 10)
 runtime_data <- gsub(" min", "", runtime_data)
 runtime_data <- as.numeric(runtime_data)
 
-#Let's have another look at the runtime data
-head(rank_data, 10)
+# Let's have another look at the runtime data
+head(runtime_data, 10)
 
+# Using CSS selectors to scrape the Movie genre section
+genre_data_html <- html_nodes(web_page, '.genre')
+
+# Converting the genre data to text
+genre_data <- html_text(genre_data_html)
+
+# Let's have a look at the genre data
+head(genre_data)
+
+# We need to tidy the genre data to remvoe "\n" control character
+# and to remove additional spaces after each ","
+# Do this using gsub() function
+#Data-Preprocessing: removing \n
+genre_data<-gsub("\n","",genre_data)
+
+#Data-Preprocessing: removing excess spaces
+genre_data<-gsub(" ","",genre_data)
+
+# Now let's examine the genre_data
+head(genre_data,10)
+
+# There are multiple genres for each film.
+# We only need to have the first genre so we can use gsub() and a wildcard to remove
+# all text after the first comma
+genre_data <- gsub(",.*", "", genre_data)
+
+# Now let's examine the genre_data
+head(genre_data, 10)
+
+# Scraping the IMDB rating section
+rating_data_html <- html_nodes(web_page, '.ratings-imdb-rating strong')
+
+# Converting the ratings data to text
+rating_data <- html_text(rating_data_html)
+
+# Let's have a look at the ratings data
+head(rating_data)
+
+# Data-Preprocessing: converting ratings to numerical values
+rating_data <- as.numeric(rating_data)
+
+# Let's have another look at the ratings data
+head(rating_data, 10)
+
+# Scraping the directors section
+directors_data_html <- html_nodes(web_page, '.text-muted+ p a:nth-child(1)')
+
+#Converting the directors data to text
+directors_data <- html_text(directors_data_html)
+
+#Let's have a look at the directors data
+head(directors_data, 10)
+
+#Data-Preprocessing: converting directors data into factors
+directors_data <- as.factor(directors_data)
+
+# Scraping the actors section
+actors_data_html <- html_nodes(web_page, '.lister-item-content .ghost+ a')
+
+# Converting the gross actors data to text
+actors_data <- html_text(actors_data_html)
+
+# Let's have a look at the actors data
+head(actors_data)
+
+# Data-Preprocessing: convert the actors data into factors
+actors_data <- as.factor(actors_data)
+
+# Scrape the metascore section
+metascore_data_html <- html_nodes(web_page, '.ratings-metascore')
+
+#Converting the data to text
+metascore_data <- html_text(metascore_data_html)
+
+#Let's have a look at the metascore 
+head(metascore_data, 10)
+
+# Data-Preprocessing: removing extra space in metascore data
+metascore_data <- gsub(" ", "", metascore_data)
+head(metascore_data, 100)
+
+# Data-Preprocessing: removing \n
+metascore_data <- gsub("\n", "", metascore_data)
+
+# Data pre-processing: remove "metascore" from data
+metascore_data <- gsub("Metascore", "", metascore_data)
+
+# Data should contain 50 values (50 movies)
+length(metascore_data)
+summary(metascore_data)
+# There's lots of metascore data missing
+na_count <- is.na(metascore_data)
+sum(na_count)
+
+# Scrape the gross revenue section
+gross_data_html <- html_nodes(web_page, '.ghost+ .text-muted+ span')
+
+#Converting the gross revenue data to text
+gross_data <- html_text(gross_data_html)
+
+#Let's have a look at the votes data
+head(gross_data)
+
+# Data-Preprocessing: removing 'M' sign
+gross_data <- gsub("M", "", gross_data)
+head(gross_data, 10)
+
+# Data-Preprocessing: removing '$' sign with substring
+gross_data <- substring(gross_data, 2, 7)
+
+#Let's check the length of gross data
+# Should be 50 - lots of data missing
+length(gross_data)
+summary(gross_data)
 
 
 
