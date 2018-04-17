@@ -7,6 +7,8 @@ url <- 'https://www.imdb.com/search/title?release_date=2017-01-01.2017-12-31'
 
 # Reading the HTML code from the website
 web_page <- read_html(url)
+
+
 # Quick look at the contents of web_page
 head(web_page)
 str(web_page)
@@ -15,6 +17,8 @@ str(web_page)
 # examined for this information first
 rank_data_html <- html_nodes(web_page, '.text-primary')
 head(rank_data_html, 10)
+# should have 50 records
+length(rank_data_html)
 
 # Converting the ranking data from HTML to text
 rank_data <- html_text(rank_data_html)
@@ -38,20 +42,66 @@ title_data <- html_text(title_data_html)
 head(title_data, 10)
 
 
-# Using CSS selectors to scrap the description section
-description_data_html <- html_nodes(web_page,'.ratings-bar+ .text-muted')
+# Scrape the description section
+description_data_html <- html_nodes(web_page, '.ratings-bar+ .text-muted')
+description_data <- html_text(description_data_html)
+# Examine the description data
+head(description_data, 10)
 
 # Converting the description data to text
 description_data <- html_text(description_data_html)
+# Delete all text after "\n". Replaces all matches of a string
+# with a string vector of same length
+description_data <- gsub("\n *", "", description_data)
+
+# Alternatively we can scrape all of the text from the description section
+# and then use gsub to remove unneeded portions of text
+# Ignore this section for now ---------------------------------------------
+
+# Delete all text with punctuation included
+# See http://www.endmemo.com/program/R/gsub.php for details
+description_data <- gsub("[[:punct:]]", "", description_data)
+
+# Delete all text with "Votes"
+description_data <- gsub("Votes", "", description_data)
+
+# Delete all text with "201*"
+description_data <- gsub("201.*", "", description_data)
+
+# Delete all text with "Gross"
+description_data <- gsub("Gross", "", description_data)
+
+# Delete all text with a number in it - eg PG12A
+description_data <- gsub(".*[0-9]", "", description_data)
+
+description_data <- gsub(".* min ", "", description_data)
+
+description_data <- description_data[description_data == ""] <- NA
+
+#-------------------------------------------------------------------
 
 # Let's have a look at the description data
-head(description_data, 10)
+head(description_data, 50)
+str(description_data)
+summary(description_data)
+class(description_data)
 
-# Tidy the decription data to remove the "\n" control character
-# using gsub() function. Replaces all matches of a string
-# with a string vector of same length
-description_data <- gsub("\n", "", description_data)
-head(description_data, 10)
+missing_char_data <- c(2, 6, 8)
+description_data <- replace_missing_data(description_data, missing_char_data)
+
+
+replace_missing_data <- function(variable_to_examine, missing_vector) {
+    for (record in missing_vector) {
+        # Create a vector of size missing data -1
+        # since the vector index starts at 0
+        missing_records <- variable_to_examine[1:(record - 1)]
+        append_data <- variable_to_examine[record:length(variable_to_examine)]
+        variable_to_examine <- append(missing_records, list("NA"))
+        variable_to_examine <- append(variable_to_examine, append_data)
+        variable_to_examine <- as.character(variable_to_examine)
+    }
+    return(variable_to_examine)
+}
 
 # Using CSS selectors to scrape the Movie runtime section
 runtime_data_html <- html_nodes(web_page, '.text-muted .runtime')
@@ -69,6 +119,10 @@ runtime_data <- as.numeric(runtime_data)
 
 # Let's have another look at the runtime data
 head(runtime_data, 10)
+length(runtime_data) # 1 value missing
+missing_runtime_data <- c(6)
+runtime_data <- replace_missing_data(runtime_data, missing_runtime_data)
+
 
 # Using CSS selectors to scrape the Movie genre section
 genre_data_html <- html_nodes(web_page, '.genre')
@@ -86,10 +140,11 @@ head(genre_data)
 genre_data<-gsub("\n","",genre_data)
 
 #Data-Preprocessing: removing excess spaces
+
 genre_data<-gsub(" ","",genre_data)
 
 # Now let's examine the genre_data
-head(genre_data,10)
+head(genre_data, 10)
 
 # There are multiple genres for each film.
 # We only need to have the first genre so we can use gsub() and a wildcard to remove
@@ -160,9 +215,20 @@ metascore_data <- gsub("Metascore", "", metascore_data)
 # Data should contain 50 values (50 movies)
 length(metascore_data)
 summary(metascore_data)
-# There's lots of metascore data missing
+# There's lots of metascore data missing and it is not NA data
 na_count <- is.na(metascore_data)
 sum(na_count)
+
+# Through analysis, this data is missing
+missing_data <- c(2, 3, 6:9, 11:13, 17, 19, 20, 21:28, 31:33, 35:38, 41:44, 46:49)
+
+metascore_data <- replace_missing_data(metascore_data, missing_data)
+head(metascore_data, 10)
+str(metascore_data)
+
+
+
+
 
 # Scrape the gross revenue section
 gross_data_html <- html_nodes(web_page, '.ghost+ .text-muted+ span')
@@ -170,8 +236,8 @@ gross_data_html <- html_nodes(web_page, '.ghost+ .text-muted+ span')
 #Converting the gross revenue data to text
 gross_data <- html_text(gross_data_html)
 
-#Let's have a look at the votes data
-head(gross_data)
+#Let's have a look at the gross data
+head(gross_data, 10)
 
 # Data-Preprocessing: removing 'M' sign
 gross_data <- gsub("M", "", gross_data)
@@ -184,6 +250,20 @@ gross_data <- substring(gross_data, 2, 7)
 # Should be 50 - lots of data missing
 length(gross_data)
 summary(gross_data)
+
+# Data-Preprocessing: converting gross to numerical
+gross_data <- as.numeric(gross_data)
+
+# Now lets combine all of the vectors into a data frame
+movies <- data.frame(rank = rank_data, Title = title_data, Desc = description_data, Genre = genre_data, Runtime = runtime_data )
+head(movies, 60)
+length(description_data)
+summary(movies)
+str(movies)
+movies
+
+
+
 
 
 
