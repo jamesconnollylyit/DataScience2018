@@ -1,6 +1,3 @@
-
-
-
 # A simple example
 dose <- c(20, 30, 40, 45, 60)
 drugA <- c(16, 20, 27, 40, 60)
@@ -100,51 +97,12 @@ title(ylab = "Drugs", col.lab = rgb(0, 0.5, 0))
 # (cex) and uses the same line colours and points used by 
 # the actual plots 
 legend(1, graph_range[2], c("Drug A", "Drug B"), cex = 0.8,
-   col = c("blue", "red"), pch = 21:22, lty = 1:2);
-
-
-
-
-
+   col = c("blue", "red"), pch = 21:22, lty = 1:2)
 
 # Create a title with a red, bold/italic font
 title(main = "Drug dosage", col.main = "red", font.main = 4)
 
-
-# Colours also available in rgb() and hsv()
-
-# RColorBrewer package is popular 
-# for creating attractive colour palettes
-# use the brewer.pal(n, name) function to 
-# generate a vector of colours.
-
-# Eg this returns a vector of seven colors 
-# in hexadecimal format from the Set1 palette
-library(RColorBrewer)
-n <- 7
-mycolors <- brewer.pal(n, "Set1")
-barplot(rep(1, n), col = mycolors)
-
-# list of the available palettes
-brewer.pal.info
-
-# Lots of grey output
-# Greys are generated with the gray() function 
-# in the base installation.
-# In this case, you specify gray levels as a vector of 
-# numbers between 0 and 1. gray(0:10 / 10) produces 10 gray levels.
-
-n <- 10
-mycolors <- rainbow(n)
-pie(rep(1, n), labels = mycolors, col = mycolors)
-mygrays <- gray(0:n / n)
-pie(rep(1, n), labels = mygrays, col = mygrays)
-
-# Enhance the simple example
-dose <- c(20, 30, 40, 45, 60)
-drugA <- c(16, 20, 27, 40, 60)
-drugB <- c(15, 18, 25, 31, 40)
-
+# Lets enhance the simple example
 # Save current graphical parameter settings - restore later
 opar <- par(no.readonly = TRUE)
 # Modify default graphical parameters - graph is 2" wide & 3" tall
@@ -162,7 +120,7 @@ plot(dose, drugB, type = "b", pch = 23, lty = 6, col = "blue", bg = "green")
 # restore the original graphical parameter settings
 par(opar)
 
-
+# Complete example of creating a line chart including axes and labels
 plot(dose, drugA, type = "b",
 col = "red", lty = 2, pch = 2, lwd = 2,
 main = "Clinical Trials for Drug A",
@@ -185,19 +143,32 @@ z <- 10 / x
 opar <- par(no.readonly = TRUE)
 # Increase margins
 par(mar = c(5, 4, 4, 8) + 0.1)
-# create new chart. Suppress annotations
+
+# Advance to new graphics frame
+plot.new()
+# Create x and y elements
+x <- c(1:10)
+y <- 1 / x
+# create new chart. Suppress annotations for y axis. 
+# Show annotations for x-axis
 plot(x, y, type = "b",
     pch = 21, col = "red",
     yaxt = "n", lty = 3, ann = FALSE)
-
-# Add an x versus 1/x line - can be used to add new 
-# graph elements to an existing graph
-lines(x, z, type = "b", pch = 22, col = "blue", lty = 2)
+?axis
 # Draw the axes
-axis(2, at = x, labels = x, col.axis = "red", las = 2)
-axis(4, at = z, labels = round(z, digits = 2),
-    col.axis = "blue", las = 2, cex.axis = 0.7, tck = -.01)
+# side 1 = x axis, 2 = y axis, 3 = top, 4 = right
+# at = points when ticks are to be drawn
+# las - labels are parallel (=0) or perpendicular(=2) to axis
+axis(2, at = y, labels = y, col.axis = "red", las = 0, tck = .05)
+# tck reference depth of tick mark
+# cex.axis references text size
 
+# Show axis on right of chart
+axis(4, at = y, labels = round(y, digits = 2),
+    col.axis = "blue", las = 0, cex.axis = 0.5, tck = .05)
+
+# Add text to side = 4 axis
+?mtext
 mtext("y=1/x", side = 4, line = 3, cex.lab = 1, las = 2, col = "blue")
 # Add titles and text
 title("An Example of Creative Axes",
@@ -206,10 +177,11 @@ title("An Example of Creative Axes",
 
 par(opar)
 
-# adds solid horizontal lines at y = 1, 5, and 7,
-abline(h = c(1, 5, 7))
-# whereas this code adds dashed blue vertical lines at x = 1, 3, 5, 7, and 9
-abline(v = seq(1, 10, 2), lty = 2, col = "blue")
+# adds solid horizontal lines at y = 1, 0.5, and 0.7,
+abline(h = c(1, 0.5, 0.7))
+? seq
+# Draw vertical lines using the seq() function. This example draws a line from 1 to 10, in 0.5 increments
+abline(v = seq(1, 10, 0.5), lty = 2, col = "blue")
 
 # Example of drug data chart
 # Input data
@@ -634,3 +606,37 @@ dotchart(x$mpg,
          pch = 19,
          main = "Fule Mileage for Car Models\ngrouped by cylinder",
          xlab = "Miles Per Gallon")
+
+
+
+
+
+
+# Colours also available in rgb() and hsv()
+
+# RColorBrewer package is popular 
+# for creating attractive colour palettes
+# use the brewer.pal(n, name) function to 
+# generate a vector of colours.
+
+# Eg this returns a vector of seven colors 
+# in hexadecimal format from the Set1 palette
+library(RColorBrewer)
+n <- 7
+mycolors <- brewer.pal(n, "Set1")
+barplot(rep(1, n), col = mycolors)
+
+# list of the available palettes
+brewer.pal.info
+
+# Lots of grey output
+# Greys are generated with the gray() function 
+# in the base installation.
+# In this case, you specify gray levels as a vector of 
+# numbers between 0 and 1. gray(0:10 / 10) produces 10 gray levels.
+
+n <- 10
+mycolors <- rainbow(n)
+pie(rep(1, n), labels = mycolors, col = mycolors)
+mygrays <- gray(0:n / n)
+pie(rep(1, n), labels = mygrays, col = mygrays)

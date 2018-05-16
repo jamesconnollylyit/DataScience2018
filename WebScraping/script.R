@@ -281,10 +281,99 @@ summary(movies)
 str(movies)
 movies
 
-# Show runtime versus rating for scraped movies
-?plot
-plot(movies$Runtime, movies$Rating, type = "p")
-plot(movies$Genre, movies$Rating, type = "p")
+# Table builds a contingency table of the counts 
+# at each combination of factor levels
+# Using data and displaying in bar plots
+plot.new()
+movie_genre <- table(movies$Genre)
+movie_genre
+barplot(movie_genre, main = "Bar plot of movies by Genre", xlab = "Genre", ylab = "No of movies")
+
+# Plots the same data horixontally
+barplot(movie_genre, main = "Horizontal Bar Plot",
+        xlab = "No of movies", ylab = "Genre",
+        horiz = TRUE)
+)
+
+chart_data <- table(movies$Genre, movies$Runtime)
+chart_data
+barplot(chart_data, main = "Stacked bar plot", xlab = "Runtime", ylab = "Frequency", col = c(1:13), legend = rownames(chart_data))
+
+? aggregate
+# aggregate splits the data into subsets
+# computes summary statistics for each
+# and returns the result in a convenient form
+# by = list of grouping elements
+# FUN = function to compute on the summary statistics
+means <- aggregate(movies$Rating, by = list(movies$Genre), FUN = mean)
+means
+# Sort the mean by order of attribute x
+means <- means[order(means$x),]
+# Note that names.arg is used to show 
+# vlaues on x axis.
+barplot(means$x, names.arg = means$Group.1)
+title("Mean genre rating")
+
+# This chart shows sum of all ratings by genre
+means <- aggregate(movies$Rating, by = list(movies$Genre), FUN = sum)
+# Sort the mean by order of attribute x
+means <- means[order(means$x, decreasing = TRUE),]
+barplot(means$x, names.arg = means$Group.1)
+title("Mean genre rating")
+
+# Histograms
+# Set 2 x 2 display
+par(mfrow = c(2, 2))
+# Show simple historgram
+# with default values
+# Each bin (bar) represents a range 
+# Eg first bar is values within (10-15), second is (15-20) etc
+hist(movies$Rating)
+
+# Show histogram with 12 breaks
+# Red bars on chart, x-axis = "Miles per gallon"
+# and main heading = "Coloured histogram with 12 bins"
+# More breaks = more detail as more space to show data
+
+hist(movies$Rating,
+     breaks = 12,
+     col = "red",
+     xlab = "Rating per movie",
+     main = "Coloured histogram with 12 bins")
+
+# maintains the same colours, bins, labels, and titles as the
+# previous plot but adds a density curve and rug-plot overlay
+# Rug-plot described in next section
+hist(movies$Rating,
+     freq = FALSE,
+     breaks = 12,
+     col = "red",
+     xlab = "Rating per movie",
+     main = "Histogram, rug plot, density curve")
+
+# similar to the second but has a superimposed normal
+# curve and a box around the figure
+x <- movies$Rating
+h <- hist(x,
+          breaks = 12,
+          col = "red",
+          xlab = "Rating per movie",
+          main = "Histogram with normal curve and box")
+
+xfit <- seq(min(x), max(x), length = 40)
+yfit <- dnorm(xfit, mean = mean(x), sd = sd(x))
+# diff returns suitably lagged and iterated differences
+yfit <- yfit * diff(h$mids[1:2]) * length(x)
+lines(xfit, yfit, col = "blue", lwd = 2)
+# Put a box around the chart
+box()
+
+# Dotchart  - plotting a large number of 
+# labeled values on a simple horizontal scale
+dotchart(chart_data, labels = row.names(movies$Genre), cex = .7,
+main = "Ratings for Movie genres",
+xlab = "Rating")
+
 
 
 
